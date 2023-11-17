@@ -11,15 +11,32 @@ class Utils:
         if validators.url(url):
             return True
         return False
-    
+
     @staticmethod
     def getTitle(url):
-        try:
-            request = requests.get(url)
-            soup = BeautifulSoup(request.text, "html.parser")
-            title_tag = soup.find("title")
-            return title_tag.get_text()
-        except:
+        # 模擬正常瀏覽器的請求頭，可根據需要增添其他頭
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        }
+        # 發送GET請求，並在其中添加headers
+        response = requests.get(url, headers=headers)
+
+        # 檢查請求是否成功
+        if response.status_code == 200:
+            # 使用BeautifulSoup解析HTML
+            soup = BeautifulSoup(response.text, 'html.parser')
+            # 找到標題標簽
+            title_tag = soup.find('title')
+            # 獲取標題内容
+            title = title_tag.text
+
+            # 判斷編碼如果不是utf-8，進行轉換
+            if response.encoding != 'utf-8':
+                title = title.encode(response.encoding).decode('utf-8')
+
+            return title
+        else:
+            print(f"Failed to retrieve the page. Status code: {response.status_code}")
             return None
     
     # 解析文本，取得用戶輸入的標簽

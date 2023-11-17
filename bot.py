@@ -1,8 +1,11 @@
+import discord
 from discord.ext import commands
 import os
-from config import discord_token # 爲了.env文件的變量
+from config import discord_token  # 爲了.env文件的變量
 
-bot = commands.Bot(command_prefix='!')
+intents = discord.Intents.default()
+intents.messages = True
+bot = commands.Bot(command_prefix='!', intents=intents)
 
 # 起動完成時
 @bot.event
@@ -38,8 +41,8 @@ async def reload(ctx, extension):
 
 # 循環載入各部分指令模塊
 # 在bot剛啟動時讀取所有檔案
-for filename in os.listdir('./cogs'): # 移動到cogs的資料夾內
-    if filename.endswith('.py'): # 找出所有結尾是.py的檔案
+for filename in os.listdir('./cogs'):  # 移動到cogs的資料夾內
+    if filename.endswith('.py'):  # 找出所有結尾是.py的檔案
         bot.load_extension(f'cogs.{filename[:-3]}')
 
 bot.run(discord_token)
